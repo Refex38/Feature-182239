@@ -1,14 +1,8 @@
-# Revisión Técnica del Esquema SQL: Integración Item Master e Inventarios
-
-**Para:** Equipo de Bases de Datos  
-**De:** Equipo de Item Master  
-**Proyecto:** Sistema Integrador ERP / MRP (TechAssembly S.A.)  
+# Feedback
 
 ---
 
-## 1. Aspectos Positivos de la Propuesta
-
-Antes de detallar los ajustes necesarios, destacamos tres decisiones de diseño acertadas en el script proporcionado:
+## 1. Aspectos Positivos del Esquema
 
 * **Separación de responsabilidades:** Dividir el estado actual del inventario (`Inventory_Stock`) del historial de movimientos (`Inventory_Transaction`) es la práctica estándar correcta para garantizar la trazabilidad y el cálculo histórico en un ERP.
 * **Restricción de unicidad compuesta:** La regla `UNIQUE (ItemID, Warehouse)` en `Inventory_Stock` evita duplicidad de registros para un mismo artículo dentro de un mismo almacén.
@@ -16,9 +10,7 @@ Antes de detallar los ajustes necesarios, destacamos tres decisiones de diseño 
 
 ---
 
-## 2. Observaciones Críticas sobre Integridad de Datos y Tipos
-
-Para cumplir con los requerimientos de integridad referencial y coerción de tipos de datos del proyecto, es necesario realizar las siguientes modificaciones:
+## 2. Observaciones sobre Integridad de Datos y Tipos
 
 ### A. Normalización de Almacenes (Integridad Referencial)
 * **Situación actual:** Los campos `Warehouse` y `WarehouseAffected` están definidos como `VARCHAR(100)`.
@@ -39,7 +31,6 @@ Para cumplir con los requerimientos de integridad referencial y coerción de tip
 
 ## 3. Alineación con los Requerimientos del MRP y Item Master
 
-Dado que nuestro módulo alimenta directamente al motor de planeación (MRP), las tablas actuales requieren información adicional para poder operar:
 
 ### A. Parámetros de Planificación Multialmacén
 El requerimiento de *Planificación Multialmacén* exige que cada artículo tenga políticas de reposición independientes por almacén. La tabla `Inventory_Stock` (o una tabla anexa de configuración) debe incluir:
