@@ -31,7 +31,6 @@
 
 ## 3. Alineación con los Requerimientos del MRP y Item Master
 
-
 ### A. Parámetros de Planificación Multialmacén
 El requerimiento de *Planificación Multialmacén* exige que cada artículo tenga políticas de reposición independientes por almacén. La tabla `Inventory_Stock` (o una tabla anexa de configuración) debe incluir:
 * `SafetyStock NUMERIC(14, 4) DEFAULT 0 CHECK (SafetyStock >= 0)` (Stock de seguridad)
@@ -53,20 +52,8 @@ Para que el MRP calcule correctamente los requerimientos netos de materiales (po
 
 ## 4. Requerimientos para la Tabla `Item_Master`
 
-Dado que el script hace referencia a `Item_Master(ItemID)`, solicitamos confirmar que la definición de dicha tabla contemple los siguientes atributos obligatorios de nuestras reglas de negocio:
-
 1. **Identificador de negocio:** `SKU VARCHAR(50) UNIQUE NOT NULL` (adicional a la llave primaria subrogada `ItemID`).
 2. **Clasificación y Ciclo de Vida:** Campos `ItemType` (Materia Prima, Producto Terminado, Servicio, etc.) y `Status` (`ACTIVE`, `OBSOLETE`, `IN_DEVELOPMENT`, `SUSPENDED`) para bloquear transacciones en artículos no activos y evitar el borrado físico.
 3. **Unidad de Medida Base:** `BaseUoMID INT NOT NULL` (inmutable si existe stock mayor a cero).
 4. **Control de Concurrencia:** Un campo `RowVersion INT DEFAULT 1 NOT NULL` para implementar bloqueo optimista cuando dos usuarios editen el mismo artículo simultáneamente.
 5. **Auditoría:** La creación de una tabla `Item_Master_Audit_Log` (o integración con MongoDB según la arquitectura del proyecto) que registre usuario, fecha, valor anterior y valor nuevo ante cambios en campos críticos.
-
----
-
-## 5. Resumen de Acciones Sugeridas
-
-1. Sustituir los campos `VARCHAR` de almacén por llaves foráneas hacia un catálogo `Warehouses`.
-2. Cambiar los tipos de datos de cantidades de `INT` a `NUMERIC(14, 4)`.
-3. Añadir `CHECK (Quantity > 0)` en `Inventory_Transaction`.
-4. Incorporar los campos de stock físico, reservado y parámetros de reorden (`SafetyStock`, `ReorderPoint`, `MinStock`, `MaxStock`) en `Inventory_Stock`.
-5. Compartir la definición DDL de las tablas `Item_Master` e `Inventory_Movements` para validar las relaciones completas antes de ejecutar las pruebas de integración.
